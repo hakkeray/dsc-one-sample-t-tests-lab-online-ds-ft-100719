@@ -15,25 +15,52 @@ Create a function in Python `one_sample_ttest(sample, popmean, alpha)` that will
 
 
 ```python
+## Import the packages
+import numpy as np
+from scipy import stats 
+import math
+import seaborn as sns
+import matplotlib.pyplot as plt
+```
+
+
+```python
 def one_sample_ttest(sample, popmean, alpha):
 
     # Visualize sample distribution for normality 
-
+    sns.set(color_codes=True)
+    sns.set(rc={'figure.figsize':(12,10)})
+    sns.distplot(sample)
     
+
     # Population mean 
+    mu = popmean
 
     # Sample mean (x̄) using NumPy mean()
+    x_bar = sample.mean()
 
     # Sample Standard Deviation (sigma) using Numpy
+    sigma = np.std(sample,ddof=1)
     
     # Degrees of freedom
+    n = len(sample)
+    df = n-1
     
     # Calculate the critical t-value
+    t_crit = np.round(stats.t.ppf(1 - alpha, df=df),3)
     
     # Calculate the t-value and p-value      
+    results = stats.ttest_1samp(a=sample, popmean=mu)
+    t=results[0]
+    p=results[1]
     
+    if (results[0]>t_crit) and (results[1]<alpha):
+        print ("Null hypothesis rejected. Results are statistically significant with t-value =", round(results[0], 2), "and p-value =", np.round((results[1]), 4))
+    else:
+        print ("Null hypothesis is Accepted")
+
     # return results
-    return None
+    return results
 ```
 
 ### Exercise 2:
@@ -58,14 +85,54 @@ Bonus: What is the effect size of the first sample compared to the population? H
 
 
 ```python
+trained_scores = np.array([84.0, 92.4, 74.3, 79.4, 86.7, 75.3, 90.9, 86.1, 81.0, 85.1, 78.7, 73.5, 86.9, 87.4, 82.7, 81.9, 69.9, 77.2, 79.3, 83.3])
+mean_trained = sum(trained_scores)/len(trained_scores)
+mean_trained
+```
 
+
+
+
+    81.80000000000003
+
+
+
+
+```python
+mean_pretrain = 65
 ```
 
 
 ```python
-
-
+diff = mean_trained - mean_pretrain
+diff
 ```
+
+
+
+
+    16.800000000000026
+
+
+
+
+```python
+one_sample_ttest(trained_scores, 65, .05)
+```
+
+    Null hypothesis rejected. Results are statistically significant with t-value = 12.69 and p-value = 0.0
+
+
+
+
+
+    Ttest_1sampResult(statistic=12.687592157174493, pvalue=1.0053355594452825e-10)
+
+
+
+
+![png](output_7_2.png)
+
 
 ## Summary
 
